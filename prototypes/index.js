@@ -27,10 +27,10 @@ const kittyPrompts = {
     
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
-    let orangeKitties = kitties.filter(kittie => (kittie.color === "orange"))
+    let orangeKitties = kitties.filter(kittie => (kittie.color === 'orange'));
     const result = orangeKitties.map(orangeKittieName => {
-      return orangeKittieName.name
-    })
+      return orangeKittieName.name;
+    });
     return result;
 
     // Annotation:
@@ -66,8 +66,8 @@ const kittyPrompts = {
     // ...etc]
 
     const result = kitties.map(kittie => {
-      kittie.age += 2
-      return kittie
+      kittie.age += 2;
+      return kittie;
     });
     return result;
 
@@ -110,11 +110,11 @@ const clubPrompts = {
     // }
 
     const result = clubs.reduce((acc, club) => {
-        club.members.forEach( member => {
+      club.members.forEach( member => {
         (acc[member]) ? acc[member].push(club.club) : acc[member] = [club.club];
-      })
-      return acc
-    }, {})
+      });
+      return acc;
+    }, {});
     return result;
 
     // Annotation:
@@ -165,8 +165,8 @@ const modPrompts = {
     // ]
 
     const result = mods.map(mod => {
-      return {mod: mod.mod, studentsPerInstructor: (mod.students / mod.instructors)}
-    })
+      return {mod: mod.mod, studentsPerInstructor: (mod.students / mod.instructors)};
+    });
     return result;
 
     // Annotation:
@@ -212,7 +212,7 @@ const cakePrompts = {
     const result = cakes.map(cake => ({
       flavor: cake.cakeFlavor,
       inStock: cake.inStock
-    }))
+    }));
     return result;
 
     // Annotation:
@@ -243,7 +243,7 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = cakes.filter(cake => cake.inStock !== 0)
+    const result = cakes.filter(cake => cake.inStock !== 0);
     return result;
 
     // Annotation:
@@ -273,11 +273,11 @@ const cakePrompts = {
     const result = cakes.reduce(( (acc, cake) => {
       cake.toppings.forEach(topping => {
         if (!acc.includes(topping)) {
-          acc.push(topping)
+          acc.push(topping);
         } 
-      })
-      return acc
-    }), [])
+      });
+      return acc;
+    }), []);
     return result;
 
     // Annotation:
@@ -310,9 +310,9 @@ const cakePrompts = {
 
     const result = cakes.reduce(( (acc, cake) => {
       cake.toppings.forEach( topping =>
-        (acc[topping]) ? acc[topping]++ : acc[topping] = 1 )
-      return acc}  
-    ), {})
+        (acc[topping]) ? acc[topping]++ : acc[topping] = 1 );
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
@@ -354,11 +354,13 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.filter(classroom => classroom.program === 'FE');
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We are trying to slim down an existing array to a new array that meet a certain condition.
+    // My first guess would be to use filter to return only those classrooms  with a program property value of 'FE'
+
   },
 
   totalCapacities() {
@@ -369,21 +371,41 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.reduce(( (acc, classroom) => {
+      acc.feCapacity = 0;
+      acc.beCapacity = 0;
+      classrooms.forEach( classroom => {
+        (classroom.program === 'FE') ? acc.feCapacity += classroom.capacity 
+          : acc.beCapacity += classroom.capacity;
+      }); 
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Since we are turning an array into a new object, and in a way compiling data from a larger data set 
+    // we should use reduce. We'll use a conditional within the reduce method to assign a property to our accumulator
+    // if the condition is met (i.e program property value equal respective program) we add that room's capacity to the 
+    // to the appropriate accumulator property
+    // since it's either or scenario, we can probably use a ternary
+    // Interesting, we couldn't just use a reduce method by itself. 
+    // it required calling the forEach method within reduce ( on classrooms array) to accumulate the values using +=
+    // I would be interested on seeing how other students solved it. 
   },
 
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.sort( (a,b) => a.capacity - b.capacity)
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // It's in the name, use the sort method. It's a method that I am still a little
+    // fresh on so I may not know how best to use it, or rather explain how I will use it before using it
+    // we still need to use parameter a, b (they seem mandatory) which will be our objects in our classrooms array
+    // a is the first object b the second, both have the same properties which we will refence in our compare function
+
+
   }
 };
 
@@ -406,11 +428,16 @@ const bookPrompts = {
     //   'Catch-22', 'Treasure Island']
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = books.filter( book => {
+      return (book.genre !== 'Horror' || book.genre !== 'True Crime')
+    }).map(book => book.title)
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // So we should filter out any book that has a genre property value of "horror" or 'true crime'
+    // then create a new array of just the titles 
+    // how should we chain methods to be efficient. 
+    // filter first then map,because otherwise we'll lose the genre property 
 
   },
   getNewBooks() {
