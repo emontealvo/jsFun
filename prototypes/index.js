@@ -164,11 +164,21 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = mods.map(mod => {
+      return {mod: mod.mod, studentsPerInstructor: (mod.students / mod.instructors)}
+    })
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    // So, we're essentially recreating the same array but with slight modifications
+    // I like map for this case
+    // since it does just that return an array of the same length, but modified values
+    // the first object property (mod) remains the same, but must sill be defined within our 
+    // map return statement
+    // the second property (students per Instructor) is students property value
+    // divided by the intructors property value
+    // 
   }
 };
 
