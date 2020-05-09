@@ -65,13 +65,20 @@ const kittyPrompts = {
     // },
     // ...etc]
 
-    const result = kitties.forEach(kittie => kittie += 2 );
+    const result = kitties.map(kittie => {
+      kittie.age += 2
+      return kittie
+    });
     return result;
 
     // This is definetly a for each since we have an outside object to capture 
     //  the activities of our for each iterator method. 
     // We're also wanting to change the same property in each object within the array in the same way
     // another hint for our forEach method
+    // Right, can't use forEach cuz it wont return a thing, so let's use map since we basically nned the same array
+    // only slightly modified. 
+    // Hmmm, don't just want the ages.... so let's return the entire modified object..
+    // sweet that worked!!!
   }
 };
 
@@ -102,12 +109,30 @@ const clubPrompts = {
     //   ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = clubs.reduce((acc, club) => {
+        club.members.forEach( member => {
+        (acc[member]) ? acc[member].push(club.club) : acc[member] = [club.club];
+      })
+      return acc
+    }, {})
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
-    // 
+    // Got real, real quick...
+    // So we must find each individual and give them a property in our object
+    // Since properties may only be defined once we may use a conditional to check if 
+    // the member name alaready exist as a property, if so push club name into their array
+    // if not create a new property with the club name within an array. 
+    // It's obvious we need to iterate over the clubs array, but in which way.  
+    // We may not be abble to use forEach since we need a new object returned, therefore
+    // experimenting with reduce to manipulate the data into an object may be the best approach. 
+    // Within this reduce()
+    // method we'll need to iterate over each clubs.members array to create a property within our 
+    // reduce method. It's tricky here since return doesn't return a thing, but when called within 
+    // a reduce, the accumulator may just be able to capture our forEach side effects.  
+
+    // Weird naming convention, but hey it aint on me this time :)
   }
 };
 
