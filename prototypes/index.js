@@ -209,11 +209,17 @@ const cakePrompts = {
     //    ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.map(cake => ({
+      flavor: cake.cakeFlavor,
+      inStock: cake.inStock
+    }))
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // resulting array is an array of same size? Yes
+    //  resulting array is a slight modification of og array? Yes
+    // Gotta say, looks like a map prototype method
+    // for each cake we'll return a new object with just the cake Flavor and inStock number
   },
 
   onlyInStock() {
@@ -237,22 +243,26 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.filter(cake => cake.inStock !== 0)
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This is asking us to remove (i.e fileter) certain elements 
+    // from our array returning a new array of different length
+    // so our condition should check for the cake property of inStock to not eaqual 0
   },
 
   totalInventory() {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce(( (acc, cake) => acc += cake.inStock), 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Asking to consilidate data into another data type, sounds a lot like our friend reduce, 
+    // our accumulator will be the number zero and we'll just go about each value for the 
+    // inStock property
   },
 
   allToppings() {
@@ -260,11 +270,31 @@ const cakePrompts = {
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce(( (acc, cake) => {
+      cake.toppings.forEach(topping => {
+        if (!acc.includes(topping)) {
+          acc.push(topping)
+        } 
+      })
+      return acc
+    }), [])
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I can see two ways to do this, we can first place all topping into one array, 
+    // and then create a set from that array 
+    // Or...
+    // we can maybe do it with chained prototype methods, perhaps reduce since we can make use of an 
+    // array as an accumulator, and maybe use a conditional with .includes to check if value 
+    // already exist inside the accumulator. Since our toppings properties are also array themselves 
+    // we'll need an iterator method to accomplish the conditional. perhaps forEach since it's handy at end of method chains
+    // that start with reduce; that accumulator is so handy :D 
+    // but then whenever I see a conditional with a for Each I star thinking filter, but then again we need to push
+    // topping to a new array, not just slim down an array, so forEach may still be the best oprion.
+
+    // Though the first may be logically simpler, it requires more end comlexity (i.e more variable declarations and steps), 
+    // so we'll do the later. 
+    //
   },
 
   groceryList() {
@@ -278,11 +308,22 @@ const cakePrompts = {
     //    ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce(( (acc, cake) => {
+      cake.toppings.forEach( topping =>
+        (acc[topping]) ? acc[topping]++ : acc[topping] = 1 )
+      return acc}  
+    ), {})
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // The biggest hint toward the use of reduce is one data type (arrays) turning into a new data type
+    // in this case we're to create an object with dynamic names using an iterator method
+    // so using reduce we will iterate over each cake, a quick conditional will make sure we don't repeat 
+    // toppings and afterward we'll return a new object with the appropriate value
+    // just realizing that it is adding the amount of times that the topping sshows up
+    // We'll still use the conditional to create the object property if it is not yet existent and set it's value 
+    // to one. Else, we'll increment the property. 
+    // Even more notes: We'll have to chain methods again because our property value of toppings is an array
   }
 };
 
