@@ -24,24 +24,31 @@ const { dinosaurs, humans, movies } = require('./datasets/dinosaurs');
 // DATASET: kitties from ./datasets/kitties
 const kittyPrompts = {
   orangeKittyNames() {
-
+    
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let orangeKitties = kitties.filter(kittie => (kittie.color === "orange"))
+    const result = orangeKitties.map(orangeKittieName => {
+      return orangeKittieName.name
+    })
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    //  It looks like we could use reduce to check for a condition and return the name of those items that meet said condition
+    //  we may have to chain a filter method to get those kitties before we get their names
+    //
   },
 
   sortByAge() {
     // Sort the kitties by their age
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.sort((a, b) => b.age - a.age);
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    // sounds like we'll need to use sort in some way.
   },
 
   growUp() {
@@ -58,8 +65,13 @@ const kittyPrompts = {
     // },
     // ...etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.forEach(kittie => kittie += 2 );
     return result;
+
+    // This is definetly a for each since we have an outside object to capture 
+    //  the activities of our for each iterator method. 
+    // We're also wanting to change the same property in each object within the array in the same way
+    // another hint for our forEach method
   }
 };
 
@@ -95,6 +107,7 @@ const clubPrompts = {
 
     // Annotation:
     // Write your annotation here as a comment
+    // 
   }
 };
 
