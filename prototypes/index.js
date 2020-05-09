@@ -396,7 +396,7 @@ const classPrompts = {
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    const result = classrooms.sort( (a,b) => a.capacity - b.capacity)
+    const result = classrooms.sort( (a,b) => a.capacity - b.capacity);
     return result;
 
     // Annotation:
@@ -428,9 +428,13 @@ const bookPrompts = {
     //   'Catch-22', 'Treasure Island']
 
 
-    const result = books.filter( book => {
-      return (book.genre !== 'Horror' || book.genre !== 'True Crime')
-    }).map(book => book.title)
+    const result = books.reduce(( (acc, book) => {
+      if (!(book.genre === 'Horror' || book.genre === 'True Crime')) {
+        acc.push(book.title);
+      }
+      return acc;
+    }), []);  
+     
     return result;
 
     // Annotation:
@@ -448,11 +452,25 @@ const bookPrompts = {
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = books.reduce(( (acc, book) => {
+      if (book.published > 1989) {
+        acc.push({
+          title: book.title,
+          year: book.published
+        });
+      }
+      return acc;
+    }), []);
+  
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Again whenever it comes to data manipulation reduce is the way to go..
+    // in a new array (our accumulator) we will place a new object with the properties of 
+    // title and year we may need to call a forEach or filter method within our reduce function 
+    // to iterate of over the books and return the new array. I am leaning toward an internal forEach 
+    // since we need to meet a codition an push a new object into an array. The pushing 
+    // seems difficult using the filter method
   }
 
 };
