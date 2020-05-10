@@ -658,11 +658,14 @@ const breweryPrompts = {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.reduce(( (acc, brewery) => acc += brewery.beers.length), 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // If there ever was a quintessential example to explain what reduce does this is the kind of scenario
+    // Here's a huge dataset, and it want a single value from it
+    // The accumulator will be useful to keep the sum of the beer count which is just the length property of 
+    // the beers property array  
   },
 
   getBreweryBeerCount() {
@@ -674,11 +677,17 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.map( brewery => ({
+      name: brewery.name, 
+      beerCount: brewery.beers.length
+    }));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // It sounds like a map scenario, since the array size will remain the same but it will have 
+    // some modifications from our initial array
+    // In this case, the method should return a new objext with two properties the name and the beerCount 
+    // simple enough name does change and the beer count equal the length of the array within the beers property of each brewery
   },
 
   findHighestAbvBeer() {
@@ -686,11 +695,19 @@ const breweryPrompts = {
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = breweries.reduce(( (acc, brewery) => {
+      brewery.beers.forEach( beer => acc.push(beer));
+      return acc.sort( (a, b) => a.abv - b.abv);
+    }), []);
+    return result.pop();
 
     // Annotation:
-    // Write your annotation here as a comment
+    //Hmmmm..... 
+    // We could place all the beers inside one massive array and then sort them and return the one that is last
+    // (i.e. highest abv) with a simple pop method. or thinking up a way to chain a few prototype methods
+    // could do the trick, but which. 
+    // I want ot use find but how. I do think using a reduce with a sort chained within will work 
+    
   }
 };
 
