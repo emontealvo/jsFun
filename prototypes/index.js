@@ -565,11 +565,22 @@ const nationalParksPrompts = {
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
     //}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce(( (acc) => {
+      acc.parksVisited = [];
+      acc.parksToVisit = [];
+      nationalParks.forEach( park => (park.visited) ? acc.parksVisited.push(park.name) : acc.parksToVisit.push(park.name));
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This prompt is asking to create a new object, so the reduce method is very likely...
+    // A visited propety exist with a boolean as a value so according to this result we will
+    // one of two things, either push into parksToVisit or parksVisited property inside our accumulator
+    // This sounds like ternary behavior... 
+    // It seems that since our accumulator properties will equal a complex data types that this will
+    // their definiton outside the iterator method that will give us the desired action
+    // It may be an instance where we use a forEach inside reduce to build complext data in a new object.
   },
 
   getParkInEachState() {
@@ -582,11 +593,14 @@ const nationalParksPrompts = {
     // { Florida: 'Everglades' } ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.map( park => ({[park.location]: park.name}));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // It looks like our dataset does not have a state with more than one park to a state
+    // so we can use map since our array will be the same size with slighty modified data 
+    // If there were multiple park per state, this may not be the case, and we will probaly find ourselves
+    // looking at reduce, or a chain of prototype methods
   },
 
   getParkActivities() {
@@ -605,11 +619,23 @@ const nationalParksPrompts = {
     //   'backpacking',
     //   'rock climbing' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce(( (acc, park) => {
+      park.activities.forEach( activity => {
+        if (!acc.includes(activity)) {
+          acc.push(activity);
+        }
+      });
+      return acc;
+    }), []);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Since this prompt is working with nested data, it will likely require chained prototype methods
+    // let see....
+    // Probably start with reduce since an array as the accumulator seems necessary 
+    // then for each iteration we will call a forEach method on the activities property of our park
+    // each of this activities will be pushed into our accumulator if (conditional) the accumulator does 
+    // not yet include the activity (call on includes method)
   }
 };
 
