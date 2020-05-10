@@ -472,7 +472,6 @@ const bookPrompts = {
     // since we need to meet a codition an push a new object into an array. The pushing 
     // seems difficult using the filter method
   }
-
 };
 
 
@@ -489,11 +488,16 @@ const weatherPrompts = {
     // return an array of all the average temperatures. Eg:
     // [ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.map( weatherPrompt => 
+      ((weatherPrompt.temperature.high + weatherPrompt.temperature.low) / 2));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // So were manipulating our data set from objects to numbers.
+    // Given that array length is the same, I am leaning on using map over the 
+    // reduce method (though doable). For each weather prompt wiht map we'll return 
+    // wetahter temperature high + low divided by two
+    // rather than pushing the results into an accumulator
   },
 
   findSunnySpots() {
@@ -503,11 +507,22 @@ const weatherPrompts = {
     // 'New Orleans, Louisiana is sunny.',
     // 'Raleigh, North Carolina is mostly sunny.' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.reduce(( (acc, forecast) => {
+      if (forecast.type.includes('sunny')) {
+        acc.push(`${forecast.location} is ${forecast.type}.`);
+      }
+      return acc;
+    }), []);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //This prompt is asking to both change the size of the array and 
+    // change the data type being held from objects to string therefore the appropriate
+    // proto method is most likely reduce. The accumulator will push the appropriate sentence 
+    // if a certain condition is met (weather promp type equals 'sunny')
+    // Raleigh N.C. is mostly sunny but still appears in our array, so instead of a strictly equals 
+    // a .includes() can be called inside our conditional an the rest should be the same,
+   
   },
 
   findHighestHumidity() {
@@ -519,11 +534,15 @@ const weatherPrompts = {
     //   temperature: { high: 49, low: 38 }
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = weather.sort( (a, b) => a.humidity - b.humidity);
+    return result.pop();
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Should be straighforward since we are returning the exavt object
+    // The struggle would be to find the highest humidity, but we could use sort and then pop or shift
+    // the get the highest hummidity I believe both method return the entire element at wither beggining or end
+    //  so a-b will have portland at the end, and we can just call pop on our result when we return it 
+    // to get the last element
 
   }
 };
