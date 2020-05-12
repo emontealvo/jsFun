@@ -751,11 +751,20 @@ const turingPrompts = {
     //  { name: 'Robbie', studentCount: 18 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.map( instructor => ({
+      name: instructor.name, 
+      studentCount: cohorts.find( cohort => instructor.module === cohort.module).studentCount
+    }));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //This prompt is asking us to create an array with the intructors name and the student count 
+    // within their respective cohort. Since the instructors array already includes
+    // an object per instructor, using the map prototype method might be convinient, 
+    // It will probably require invoking a prototype method for the student count value,
+    // so it must equate to a number/the value of studentCount. It may require a 
+    // conditional to check if the module property in intructors equals the module property 
+    // inside the cohort objects array.   
   },
 
   studentsPerInstructor() {
@@ -765,11 +774,18 @@ const turingPrompts = {
     // cohort1804: 10.5
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cohorts.reduce(( (acc, cohort) => {
+      let numberOfInstructors = instructors.filter( instructor => instructor.module === cohort.module).length;
+      acc[`cohort${cohort.cohort}`] = (cohort.studentCount / numberOfInstructors);
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //  We are wanting to create an object from an array, it looks like a case for reduce to create a 
+    // property for each cohort, but the value will require invoking aother prototype method 
+    // to iteratei over the instructors array possibly filter and use the length of the 
+    //  resulting array as the denominator to the value of studentCount property in the cohort array. 
   },
 
   modulesPerTeacher() {
@@ -787,11 +803,23 @@ const turingPrompts = {
     //     Will: [1, 2, 3, 4]
     //   }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce(( (acc, instructor) => {
+      acc[instructor.name] = [];
+      cohorts.forEach( cohort => cohort.curriculum.forEach( (subject) => {
+        if (instructor.teaches.includes(subject) && !(acc[instructor.name].includes(cohort.module))) {
+          acc[instructor.name].push(cohort.module);
+        }}));
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This makes me think we'll call a forEach method that checks the instrcutor teaches property 
+    // against the cohorts curricululm property array in a conditional using a sort of includes
+    // if this conditions is met, push the cohort module property value into a an array with each instructors 
+    // name 
+    // Since we are consilidating two data set to one, we should propably start the chain with 
+    // a reduce  
   },
 
   curriculumPerTeacher() {
@@ -804,11 +832,29 @@ const turingPrompts = {
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cohorts.reduce(( (acc, cohort) => {
+      cohort.curriculum.forEach( subject => {
+        if (!(acc[subject])) {
+          acc[subject] = []; 
+        } 
+        instructors.forEach( instructor => {
+          if (instructor.teaches.includes(subject) && !acc[subject].includes(instructor.name)) {
+            acc[subject].push(instructor.name);
+          }
+        });
+      });
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // There are two choices to acces the different curriculum topics, but the prompt seem to lean torward
+    // wanting to start from the cohorts array ans use the curriculum property 
+    // Since a new object with an unknown amount of properties 
+    // has to be returned the iteration chain will probably  begin with 
+    // reduce() then use for each to accumulate properties and the teachers associated 
+    // with it. The accumulation of teachers will only happens once if the proper conditional is set 
+    // 
   }
 };
 
