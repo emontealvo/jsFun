@@ -24,24 +24,31 @@ const { dinosaurs, humans, movies } = require('./datasets/dinosaurs');
 // DATASET: kitties from ./datasets/kitties
 const kittyPrompts = {
   orangeKittyNames() {
-
+    
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let orangeKitties = kitties.filter(kittie => (kittie.color === 'orange'));
+    const result = orangeKitties.map(orangeKittieName => {
+      return orangeKittieName.name;
+    });
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    //  It looks like we could use reduce to check for a condition and return the name of those items that meet said condition
+    //  we may have to chain a filter method to get those kitties before we get their names
+    //
   },
 
   sortByAge() {
     // Sort the kitties by their age
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.sort((a, b) => b.age - a.age);
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    // sounds like we'll need to use sort in some way.
   },
 
   growUp() {
@@ -58,8 +65,20 @@ const kittyPrompts = {
     // },
     // ...etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.map(kittie => {
+      kittie.age += 2;
+      return kittie;
+    });
     return result;
+
+    // This is definetly a for each since we have an outside object to capture 
+    //  the activities of our for each iterator method. 
+    // We're also wanting to change the same property in each object within the array in the same way
+    // another hint for our forEach method
+    // Right, can't use forEach cuz it wont return a thing, so let's use map since we basically nned the same array
+    // only slightly modified. 
+    // Hmmm, don't just want the ages.... so let's return the entire modified object..
+    // sweet that worked!!!
   }
 };
 
@@ -90,11 +109,30 @@ const clubPrompts = {
     //   ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = clubs.reduce((acc, club) => {
+      club.members.forEach( member => {
+        (acc[member]) ? acc[member].push(club.club) : acc[member] = [club.club];
+      });
+      return acc;
+    }, {});
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    // Got real, real quick...
+    // So we must find each individual and give them a property in our object
+    // Since properties may only be defined once we may use a conditional to check if 
+    // the member name alaready exist as a property, if so push club name into their array
+    // if not create a new property with the club name within an array. 
+    // It's obvious we need to iterate over the clubs array, but in which way.  
+    // We may not be abble to use forEach since we need a new object returned, therefore
+    // experimenting with reduce to manipulate the data into an object may be the best approach. 
+    // Within this reduce()
+    // method we'll need to iterate over each clubs.members array to create a property within our 
+    // reduce method. It's tricky here since return doesn't return a thing, but when called within 
+    // a reduce, the accumulator may just be able to capture our forEach side effects.  
+
+    // Weird naming convention, but hey it aint on me this time :)
   }
 };
 
@@ -126,11 +164,21 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = mods.map(mod => {
+      return {mod: mod.mod, studentsPerInstructor: (mod.students / mod.instructors)};
+    });
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    // So, we're essentially recreating the same array but with slight modifications
+    // I like map for this case
+    // since it does just that return an array of the same length, but modified values
+    // the first object property (mod) remains the same, but must sill be defined within our 
+    // map return statement
+    // the second property (students per Instructor) is students property value
+    // divided by the intructors property value
+    // 
   }
 };
 
@@ -161,11 +209,17 @@ const cakePrompts = {
     //    ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.map(cake => ({
+      flavor: cake.cakeFlavor,
+      inStock: cake.inStock
+    }));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // resulting array is an array of same size? Yes
+    //  resulting array is a slight modification of og array? Yes
+    // Gotta say, looks like a map prototype method
+    // for each cake we'll return a new object with just the cake Flavor and inStock number
   },
 
   onlyInStock() {
@@ -189,22 +243,26 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.filter(cake => cake.inStock !== 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This is asking us to remove (i.e fileter) certain elements 
+    // from our array returning a new array of different length
+    // so our condition should check for the cake property of inStock to not eaqual 0
   },
 
   totalInventory() {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce(( (acc, cake) => acc += cake.inStock), 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Asking to consilidate data into another data type, sounds a lot like our friend reduce, 
+    // our accumulator will be the number zero and we'll just go about each value for the 
+    // inStock property
   },
 
   allToppings() {
@@ -212,11 +270,31 @@ const cakePrompts = {
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce(( (acc, cake) => {
+      cake.toppings.forEach(topping => {
+        if (!acc.includes(topping)) {
+          acc.push(topping);
+        } 
+      });
+      return acc;
+    }), []);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I can see two ways to do this, we can first place all topping into one array, 
+    // and then create a set from that array 
+    // Or...
+    // we can maybe do it with chained prototype methods, perhaps reduce since we can make use of an 
+    // array as an accumulator, and maybe use a conditional with .includes to check if value 
+    // already exist inside the accumulator. Since our toppings properties are also array themselves 
+    // we'll need an iterator method to accomplish the conditional. perhaps forEach since it's handy at end of method chains
+    // that start with reduce; that accumulator is so handy :D 
+    // but then whenever I see a conditional with a for Each I star thinking filter, but then again we need to push
+    // topping to a new array, not just slim down an array, so forEach may still be the best oprion.
+
+    // Though the first may be logically simpler, it requires more end comlexity (i.e more variable declarations and steps), 
+    // so we'll do the later. 
+    //
   },
 
   groceryList() {
@@ -230,11 +308,20 @@ const cakePrompts = {
     //    ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce(((acc, cake) => {
+      cake.toppings.forEach( topping => (acc[topping]) ? acc[topping]++ : acc[topping] = 1);
+      return acc;
+    }), {}); 
     return result;
-
     // Annotation:
-    // Write your annotation here as a comment
+    // The biggest hint toward the use of reduce is one data type (arrays) turning into a new data type
+    // in this case we're to create an object with dynamic names using an iterator method
+    // so using reduce we will iterate over each cake, a quick conditional will make sure we don't repeat 
+    // toppings and afterward we'll return a new object with the appropriate value
+    // just realizing that it is adding the amount of times that the topping sshows up
+    // We'll still use the conditional to create the object property if it is not yet existent and set it's value 
+    // to one. Else, we'll increment the property. 
+    // Even more notes: We'll have to chain methods again because our property value of toppings is an array
   }
 };
 
@@ -265,11 +352,13 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.filter(classroom => classroom.program === 'FE');
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We are trying to slim down an existing array to a new array that meet a certain condition.
+    // My first guess would be to use filter to return only those classrooms  with a program property value of 'FE'
+
   },
 
   totalCapacities() {
@@ -280,21 +369,41 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.reduce(( (acc, classroom) => {
+      acc.feCapacity = 0;
+      acc.beCapacity = 0;
+      classrooms.forEach( classroom => {
+        (classroom.program === 'FE') ? acc.feCapacity += classroom.capacity 
+          : acc.beCapacity += classroom.capacity;
+      }); 
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Since we are turning an array into a new object, and in a way compiling data from a larger data set 
+    // we should use reduce. We'll use a conditional within the reduce method to assign a property to our accumulator
+    // if the condition is met (i.e program property value equal respective program) we add that room's capacity to the 
+    // to the appropriate accumulator property
+    // since it's either or scenario, we can probably use a ternary
+    // Interesting, we couldn't just use a reduce method by itself. 
+    // it required calling the forEach method within reduce ( on classrooms array) to accumulate the values using +=
+    // I would be interested on seeing how other students solved it. 
   },
 
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.sort( (a,b) => a.capacity - b.capacity);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // It's in the name, use the sort method. It's a method that I am still a little
+    // fresh on so I may not know how best to use it, or rather explain how I will use it before using it
+    // we still need to use parameter a, b (they seem mandatory) which will be our objects in our classrooms array
+    // a is the first object b the second, both have the same properties which we will refence in our compare function
+
+
   }
 };
 
@@ -317,11 +426,20 @@ const bookPrompts = {
     //   'Catch-22', 'Treasure Island']
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = books.reduce(( (acc, book) => {
+      if (!(book.genre === 'Horror' || book.genre === 'True Crime')) {
+        acc.push(book.title);
+      }
+      return acc;
+    }), []);  
+     
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // So we should filter out any book that has a genre property value of "horror" or 'true crime'
+    // then create a new array of just the titles 
+    // how should we chain methods to be efficient. 
+    // filter first then map,because otherwise we'll lose the genre property 
 
   },
   getNewBooks() {
@@ -332,13 +450,26 @@ const bookPrompts = {
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = books.reduce(( (acc, book) => {
+      if (book.published > 1989) {
+        acc.push({
+          title: book.title,
+          year: book.published
+        });
+      }
+      return acc;
+    }), []);
+  
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Again whenever it comes to data manipulation reduce is the way to go..
+    // in a new array (our accumulator) we will place a new object with the properties of 
+    // title and year we may need to call a forEach or filter method within our reduce function 
+    // to iterate of over the books and return the new array. I am leaning toward an internal forEach 
+    // since we need to meet a codition an push a new object into an array. The pushing 
+    // seems difficult using the filter method
   }
-
 };
 
 
@@ -355,11 +486,16 @@ const weatherPrompts = {
     // return an array of all the average temperatures. Eg:
     // [ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.map( weatherPrompt => 
+      ((weatherPrompt.temperature.high + weatherPrompt.temperature.low) / 2));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // So were manipulating our data set from objects to numbers.
+    // Given that array length is the same, I am leaning on using map over the 
+    // reduce method (though doable). For each weather prompt wiht map we'll return 
+    // wetahter temperature high + low divided by two
+    // rather than pushing the results into an accumulator
   },
 
   findSunnySpots() {
@@ -369,11 +505,22 @@ const weatherPrompts = {
     // 'New Orleans, Louisiana is sunny.',
     // 'Raleigh, North Carolina is mostly sunny.' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.reduce(( (acc, forecast) => {
+      if (forecast.type.includes('sunny')) {
+        acc.push(`${forecast.location} is ${forecast.type}.`);
+      }
+      return acc;
+    }), []);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //This prompt is asking to both change the size of the array and 
+    // change the data type being held from objects to string therefore the appropriate
+    // proto method is most likely reduce. The accumulator will push the appropriate sentence 
+    // if a certain condition is met (weather promp type equals 'sunny')
+    // Raleigh N.C. is mostly sunny but still appears in our array, so instead of a strictly equals 
+    // a .includes() can be called inside our conditional an the rest should be the same,
+   
   },
 
   findHighestHumidity() {
@@ -385,11 +532,15 @@ const weatherPrompts = {
     //   temperature: { high: 49, low: 38 }
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = weather.sort( (a, b) => a.humidity - b.humidity);
+    return result.pop();
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Should be straighforward since we are returning the exavt object
+    // The struggle would be to find the highest humidity, but we could use sort and then pop or shift
+    // the get the highest hummidity I believe both method return the entire element at wither beggining or end
+    //  so a-b will have portland at the end, and we can just call pop on our result when we return it 
+    // to get the last element
 
   }
 };
@@ -412,11 +563,22 @@ const nationalParksPrompts = {
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
     //}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce(( (acc) => {
+      acc.parksVisited = [];
+      acc.parksToVisit = [];
+      nationalParks.forEach( park => (park.visited) ? acc.parksVisited.push(park.name) : acc.parksToVisit.push(park.name));
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This prompt is asking to create a new object, so the reduce method is very likely...
+    // A visited propety exist with a boolean as a value so according to this result we will
+    // one of two things, either push into parksToVisit or parksVisited property inside our accumulator
+    // This sounds like ternary behavior... 
+    // It seems that since our accumulator properties will equal a complex data types that this will
+    // their definiton outside the iterator method that will give us the desired action
+    // It may be an instance where we use a forEach inside reduce to build complext data in a new object.
   },
 
   getParkInEachState() {
@@ -429,11 +591,14 @@ const nationalParksPrompts = {
     // { Florida: 'Everglades' } ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.map( park => ({[park.location]: park.name}));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // It looks like our dataset does not have a state with more than one park to a state
+    // so we can use map since our array will be the same size with slighty modified data 
+    // If there were multiple park per state, this may not be the case, and we will probaly find ourselves
+    // looking at reduce, or a chain of prototype methods
   },
 
   getParkActivities() {
@@ -452,11 +617,23 @@ const nationalParksPrompts = {
     //   'backpacking',
     //   'rock climbing' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce(( (acc, park) => {
+      park.activities.forEach( activity => {
+        if (!acc.includes(activity)) {
+          acc.push(activity);
+        }
+      });
+      return acc;
+    }), []);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Since this prompt is working with nested data, it will likely require chained prototype methods
+    // let see....
+    // Probably start with reduce since an array as the accumulator seems necessary 
+    // then for each iteration we will call a forEach method on the activities property of our park
+    // each of this activities will be pushed into our accumulator if (conditional) the accumulator does 
+    // not yet include the activity (call on includes method)
   }
 };
 
@@ -479,11 +656,14 @@ const breweryPrompts = {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.reduce(( (acc, brewery) => acc += brewery.beers.length), 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // If there ever was a quintessential example to explain what reduce does this is the kind of scenario
+    // Here's a huge dataset, and it want a single value from it
+    // The accumulator will be useful to keep the sum of the beer count which is just the length property of 
+    // the beers property array  
   },
 
   getBreweryBeerCount() {
@@ -495,11 +675,17 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.map( brewery => ({
+      name: brewery.name, 
+      beerCount: brewery.beers.length
+    }));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // It sounds like a map scenario, since the array size will remain the same but it will have 
+    // some modifications from our initial array
+    // In this case, the method should return a new objext with two properties the name and the beerCount 
+    // simple enough name does change and the beer count equal the length of the array within the beers property of each brewery
   },
 
   findHighestAbvBeer() {
@@ -507,11 +693,19 @@ const breweryPrompts = {
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = breweries.reduce(( (acc, brewery) => {
+      brewery.beers.forEach( beer => acc.push(beer));
+      return acc.sort( (a, b) => a.abv - b.abv);
+    }), []);
+    return result.pop();
 
     // Annotation:
-    // Write your annotation here as a comment
+    //Hmmmm..... 
+    // We could place all the beers inside one massive array and then sort them and return the one that is last
+    // (i.e. highest abv) with a simple pop method. or thinking up a way to chain a few prototype methods
+    // could do the trick, but which. 
+    // I want ot use find but how. I do think using a reduce with a sort chained within will work 
+    
   }
 };
 
@@ -555,11 +749,20 @@ const turingPrompts = {
     //  { name: 'Robbie', studentCount: 18 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.map( instructor => ({
+      name: instructor.name, 
+      studentCount: cohorts.find( cohort => instructor.module === cohort.module).studentCount
+    }));
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //This prompt is asking us to create an array with the intructors name and the student count 
+    // within their respective cohort. Since the instructors array already includes
+    // an object per instructor, using the map prototype method might be convinient, 
+    // It will probably require invoking a prototype method for the student count value,
+    // so it must equate to a number/the value of studentCount. It may require a 
+    // conditional to check if the module property in intructors equals the module property 
+    // inside the cohort objects array.   
   },
 
   studentsPerInstructor() {
@@ -569,11 +772,18 @@ const turingPrompts = {
     // cohort1804: 10.5
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cohorts.reduce(( (acc, cohort) => {
+      let numberOfInstructors = instructors.filter( instructor => instructor.module === cohort.module).length;
+      acc[`cohort${cohort.cohort}`] = (cohort.studentCount / numberOfInstructors);
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //  We are wanting to create an object from an array, it looks like a case for reduce to create a 
+    // property for each cohort, but the value will require invoking aother prototype method 
+    // to iteratei over the instructors array possibly filter and use the length of the 
+    //  resulting array as the denominator to the value of studentCount property in the cohort array. 
   },
 
   modulesPerTeacher() {
@@ -591,11 +801,23 @@ const turingPrompts = {
     //     Will: [1, 2, 3, 4]
     //   }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce(( (acc, instructor) => {
+      acc[instructor.name] = [];
+      cohorts.forEach( cohort => cohort.curriculum.forEach( (subject) => {
+        if (instructor.teaches.includes(subject) && !(acc[instructor.name].includes(cohort.module))) {
+          acc[instructor.name].push(cohort.module);
+        }}));
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This makes me think we'll call a forEach method that checks the instrcutor teaches property 
+    // against the cohorts curricululm property array in a conditional using a sort of includes
+    // if this conditions is met, push the cohort module property value into a an array with each instructors 
+    // name 
+    // Since we are consilidating two data set to one, we should propably start the chain with 
+    // a reduce  
   },
 
   curriculumPerTeacher() {
@@ -608,11 +830,29 @@ const turingPrompts = {
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cohorts.reduce(( (acc, cohort) => {
+      cohort.curriculum.forEach( subject => {
+        if (!(acc[subject])) {
+          acc[subject] = []; 
+        } 
+        instructors.forEach( instructor => {
+          if (instructor.teaches.includes(subject) && !acc[subject].includes(instructor.name)) {
+            acc[subject].push(instructor.name);
+          }
+        });
+      });
+      return acc;
+    }), {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // There are two choices to acces the different curriculum topics, but the prompt seem to lean torward
+    // wanting to start from the cohorts array ans use the curriculum property 
+    // Since a new object with an unknown amount of properties 
+    // has to be returned the iteration chain will probably  begin with 
+    // reduce() then use for each to accumulate properties and the teachers associated 
+    // with it. The accumulation of teachers will only happens once if the proper conditional is set 
+    // 
   }
 };
 
@@ -642,12 +882,24 @@ const bossPrompts = {
     //   { bossName: 'Ursula', sidekickLoyalty: 20 },
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const bossList = Object.keys(bosses);
+   
+    const result = bossList.map( bossName => {
+      let loyaltySum = sidekicks.reduce(((acc, sidekick) => {
+        if( bosses[bossName].name === sidekick.boss) {
+          acc += sidekick.loyaltyToBoss;
+        }
+        return acc;
+      }), 0);
+      return { bossName: bosses[bossName].name, sidekickLoyalty: loyaltySum};
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // There is a bosses object for each boss and it has a name property
+    // that will be used to create the value of our new object under bossName
+    // it will also have a sencond property that will be the sum total of loyalty to Boss 
+    // forEach side kick  in sidekick array. 
   }
 };
 
