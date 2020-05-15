@@ -308,13 +308,11 @@ const cakePrompts = {
     //    ...etc
     // }
 
-    const result = cakes.reduce(( (acc, cake) => {
-      cake.toppings.forEach( topping =>
-        (acc[topping]) ? acc[topping]++ : acc[topping] = 1 );
+    const result = cakes.reduce(((acc, cake) => {
+      cake.toppings.forEach( topping => (acc[topping]) ? acc[topping]++ : acc[topping] = 1);
       return acc;
-    }), {});
+    }), {}); 
     return result;
-
     // Annotation:
     // The biggest hint toward the use of reduce is one data type (arrays) turning into a new data type
     // in this case we're to create an object with dynamic names using an iterator method
@@ -884,12 +882,24 @@ const bossPrompts = {
     //   { bossName: 'Ursula', sidekickLoyalty: 20 },
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const bossList = Object.keys(bosses);
+   
+    const result = bossList.map( bossName => {
+      let loyaltySum = sidekicks.reduce(((acc, sidekick) => {
+        if( bosses[bossName].name === sidekick.boss) {
+          acc += sidekick.loyaltyToBoss;
+        }
+        return acc;
+      }), 0);
+      return { bossName: bosses[bossName].name, sidekickLoyalty: loyaltySum};
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // There is a bosses object for each boss and it has a name property
+    // that will be used to create the value of our new object under bossName
+    // it will also have a sencond property that will be the sum total of loyalty to Boss 
+    // forEach side kick  in sidekick array. 
   }
 };
 
